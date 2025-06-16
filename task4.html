@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Listing</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+
+    .controls {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    select {
+      padding: 0.5rem;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .product {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      border-radius: 5px;
+    }
+
+    .product h3 {
+      margin: 0.5rem 0 0.3rem;
+    }
+
+    .product p {
+      margin: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛒 Products</h2>
+
+  <div class="controls">
+    <select id="categoryFilter">
+      <option value="all">All Categories</option>
+      <option value="electronics">Electronics</option>
+      <option value="books">Books</option>
+      <option value="fashion">Fashion</option>
+      <option value="home">Home</option>
+    </select>
+
+    <select id="sortBy">
+      <option value="default">Sort By</option>
+      <option value="price">Price</option>
+      <option value="rating">Rating</option>
+    </select>
+  </div>
+
+  <div class="product-list" id="productList"></div>
+
+  <script>
+    const products = [
+      {
+        name: "Laptop",
+        category: "electronics",
+        price: 50000,
+        rating: 4.5,
+        image: "https://m.media-amazon.com/images/I/71YlH-4MUQL._AC_UF894,1000_QL80_.jpg"
+      },
+      {
+        name: "Mobile",
+        category: "electronics",
+        price: 30000,
+        rating: 4.2,
+        image: "https://m.media-amazon.com/images/I/61uA2UVnYWL.jpg"
+      },
+      {
+        name: "Headphones",
+        category: "electronics",
+        price: 2500,
+        rating: 4.0,
+        image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQJYTTBGwPGmCctBAL4hbKJtvfJ5Q62KWe4zjemMeOnqRZYFi484VrzJVuNtSl-rn-HzZkjk4BQzaNgsB8qs9uXNaplqzBNv7FsvKLUSkumFvgSzFSLC1Rm"
+      },
+      {
+        name: "Smartwatch",
+        category: "electronics",
+        price: 7000,
+        rating: 4.3,
+        image: "https://m.media-amazon.com/images/I/61epn29QG0L.jpg"
+      },
+      {
+        name: "Book A",
+        category: "books",
+        price: 500,
+        rating: 4.8,
+        image: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg"
+      },
+      {
+        name: "Book B",
+        category: "books",
+        price: 300,
+        rating: 4.1,
+        image: "https://m.media-amazon.com/images/I/81eB+7+CkUL.jpg"
+      },
+      {
+        name: "Programming with JS",
+        category: "books",
+        price: 750,
+        rating: 4.9,
+        image: "https://m.media-amazon.com/images/I/81kqrwS1nNL.jpg"
+      },
+      {
+        name: "Novel: The Alchemist",
+        category: "books",
+        price: 350,
+        rating: 4.7,
+        image: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg"
+      },
+      {
+        name: "Sneakers",
+        category: "fashion",
+        price: 1999,
+        rating: 4.6,
+        image: "https://m.media-amazon.com/images/I/81a4kCNuH+L._AC_UL1500_.jpg"
+      }
+    ];
+
+    const categoryFilter = document.getElementById("categoryFilter");
+    const sortBy = document.getElementById("sortBy");
+    const productList = document.getElementById("productList");
+
+    function renderProducts() {
+      let filtered = [...products];
+
+      const category = categoryFilter.value;
+      if (category !== "all") {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      const sortOption = sortBy.value;
+      if (sortOption === "price") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortOption === "rating") {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      productList.innerHTML = "";
+      filtered.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p>₹${p.price}</p>
+          <p>⭐ ${p.rating}</p>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    categoryFilter.onchange = renderProducts;
+    sortBy.onchange = renderProducts;
+    window.onload = renderProducts;
+  </script>
+</body>
+</html>

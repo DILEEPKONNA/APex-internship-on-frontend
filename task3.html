@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript Quiz</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    p, label {
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    #options {
+      list-style: none;
+      padding: 0;
+    }
+
+    #options li {
+      margin-bottom: 15px;
+      transition: background-color 0.2s;
+    }
+
+    #options li:hover {
+      background-color: #f0f8ff;
+      border-radius: 5px;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #357abd;
+    }
+
+    #joke {
+      margin-top: 20px;
+      font-style: italic;
+      color: #444;
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #4a90e2;
+    }
+
+    #score {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        margin: 15px;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      p, label {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>JavaScript Quiz</h1>
+
+    <div id="quiz">
+      <p id="question">Loading question...</p>
+      <ul id="options"></ul>
+      <button onclick="nextQuestion()">Next</button>
+      <div id="score"></div>
+    </div>
+
+    <div id="joke-section" style="margin-top: 40px;">
+      <button onclick="loadJoke()">Get a Random Joke</button>
+      <div id="joke">Click the button to load a joke!</div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of India?",
+        options: ["Delhi", "Mumbai", "Kolkata", "Chennai"],
+        answer: "Delhi"
+      },
+      {
+        question: "What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinks and Text Markup Language",
+          "High Text Machine Language"
+        ],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        question: "Which language is used for styling web pages?",
+        options: ["HTML", "JQuery", "CSS", "XML"],
+        answer: "CSS"
+      },
+      {
+        question: "Which is not a JavaScript framework?",
+        options: ["Python Script", "JQuery", "Django", "NodeJS"],
+        answer: "Django"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const current = questions[currentIndex];
+      document.getElementById("question").textContent = current.question;
+
+      const optionsList = document.getElementById("options");
+      optionsList.innerHTML = "";
+
+      current.options.forEach(option => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <label>
+            <input type="radio" name="option" value="${option}" />
+            ${option}
+          </label>
+        `;
+        optionsList.appendChild(li);
+      });
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="option"]:checked');
+      if (!selected) {
+        alert("Please select an option before proceeding.");
+        return;
+      }
+
+      const userAnswer = selected.value;
+      const correctAnswer = questions[currentIndex].answer;
+
+      if (userAnswer === correctAnswer) {
+        score++;
+        alert("✅ Correct!");
+      } else {
+        alert(`❌ Incorrect. Correct answer is: ${correctAnswer}`);
+      }
+
+      currentIndex++;
+
+      if (currentIndex < questions.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quiz").innerHTML = `
+          <h2>Quiz Completed!</h2>
+          <p>Your final score is: ${score} out of ${questions.length}</p>
+        `;
+      }
+
+      document.getElementById("score").textContent = `Score: ${score}`;
+    }
+
+    async function loadJoke() {
+      try {
+        const response = await fetch("https://official-joke-api.appspot.com/jokes/random");
+        const joke = await response.json();
+        document.getElementById("joke").textContent = `${joke.setup} — ${joke.punchline}`;
+      } catch (error) {
+        document.getElementById("joke").textContent = "Could not load joke. Try again.";
+      }
+    }
+
+    window.onload = loadQuestion;
+  </script>
+
+</body>
+</html>
